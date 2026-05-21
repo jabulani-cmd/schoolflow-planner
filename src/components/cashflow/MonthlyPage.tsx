@@ -50,13 +50,17 @@ export function MonthlyPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <MetricCard label="Opening balance" value={fmt(m.openingBalance)} tone={m.openingBalance >= 0 ? "positive" : "negative"} />
         <MetricCard label="Total revenue" value={fmt(m.totalRevenue)} tone="positive" />
-        <MetricCard label="Monthly subs" value={fmt(m.monthlyRevenue)} tone="info" />
-        <MetricCard label="Term subs" value={fmt(m.termRevenue)} tone="info" />
         <MetricCard
-          label="Net cashflow"
+          label="Net this month"
           value={fmt(m.net)}
           tone={m.net >= 0 ? "positive" : "negative"}
+        />
+        <MetricCard
+          label="Closing balance"
+          value={fmt(m.closingBalance)}
+          tone={m.closingBalance >= 0 ? "positive" : "negative"}
         />
       </div>
 
