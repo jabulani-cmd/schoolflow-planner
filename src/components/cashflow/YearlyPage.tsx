@@ -15,8 +15,6 @@ export function YearlyPage() {
   const tms = termMonths(state);
   const eligible = state.schools.filter(isEligible);
   const chartData = months.map((m, i) => ({ month: MONTHS[i], net: Math.round(m.net) }));
-  const annual = (sel: (m: ReturnType<typeof computeYear>[number]) => number) =>
-    months.reduce((a, m) => a + sel(m), 0);
 
   return (
     <div className="space-y-6">
