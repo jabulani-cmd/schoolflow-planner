@@ -74,6 +74,10 @@ export function exportXlsx(state: AppState) {
   totalExp.push(monthly.reduce((a, m) => a + m.totalExpenses, 0));
   const netRow = ["Net cashflow", ...monthly.map((m) => m.net)];
   netRow.push(monthly.reduce((a, m) => a + m.net, 0));
+  const openRow = ["Opening balance", ...monthly.map((m) => m.openingBalance)];
+  openRow.push(monthly[0].openingBalance);
+  const closeRow = ["Closing balance (carry-over)", ...monthly.map((m) => m.closingBalance)];
+  closeRow.push(monthly[11].closingBalance);
 
   const cashflowData = [
     header,
