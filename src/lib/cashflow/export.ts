@@ -74,6 +74,10 @@ export function exportXlsx(state: AppState) {
   totalExp.push(monthly.reduce((a, m) => a + m.totalExpenses, 0));
   const netRow = ["Net cashflow", ...monthly.map((m) => m.net)];
   netRow.push(monthly.reduce((a, m) => a + m.net, 0));
+  const openRow = ["Opening balance", ...monthly.map((m) => m.openingBalance)];
+  openRow.push(monthly[0].openingBalance);
+  const closeRow = ["Closing balance (carry-over)", ...monthly.map((m) => m.closingBalance)];
+  closeRow.push(monthly[11].closingBalance);
 
   const cashflowData = [
     header,
@@ -89,6 +93,9 @@ export function exportXlsx(state: AppState) {
     totalExp,
     [],
     netRow,
+    [],
+    openRow,
+    closeRow,
   ];
   const ws2 = XLSX.utils.aoa_to_sheet(cashflowData);
   ws2["!cols"] = [{ wch: 32 }, ...Array(13).fill({ wch: 14 })];

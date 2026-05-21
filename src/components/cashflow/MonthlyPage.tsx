@@ -5,13 +5,14 @@ import {
   Select, SelectTrigger, SelectValue, SelectContent, SelectItem,
 } from "@/components/ui/select";
 import { MetricCard } from "./MetricCard";
-import { computeMonth, fmt, fmt2, isEligible, MONTHS_FULL } from "@/lib/cashflow/calc";
+import { computeYear, fmt, fmt2, isEligible, MONTHS_FULL } from "@/lib/cashflow/calc";
 import { cn } from "@/lib/utils";
 
 export function MonthlyPage() {
   const state = useStore();
   const { selectedMonth, selectedYear, setSelectedMonth, setSelectedYear, schools } = state;
-  const m = computeMonth(state, selectedMonth);
+  const year = computeYear(state);
+  const m = year[selectedMonth];
   const eligible = schools.filter(isEligible);
 
   const years = [2026, 2027, 2028, 2029, 2030];
@@ -49,13 +50,17 @@ export function MonthlyPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <MetricCard label="Opening balance" value={fmt(m.openingBalance)} tone={m.openingBalance >= 0 ? "positive" : "negative"} />
         <MetricCard label="Total revenue" value={fmt(m.totalRevenue)} tone="positive" />
-        <MetricCard label="Monthly subs" value={fmt(m.monthlyRevenue)} tone="info" />
-        <MetricCard label="Term subs" value={fmt(m.termRevenue)} tone="info" />
         <MetricCard
-          label="Net cashflow"
+          label="Net this month"
           value={fmt(m.net)}
           tone={m.net >= 0 ? "positive" : "negative"}
+        />
+        <MetricCard
+          label="Closing balance"
+          value={fmt(m.closingBalance)}
+          tone={m.closingBalance >= 0 ? "positive" : "negative"}
         />
       </div>
 
@@ -101,15 +106,20 @@ export function MonthlyPage() {
       </Card>
 
       <Card>
-        <CardContent className="flex items-center justify-between p-5">
-          <div className="text-base font-semibold">Net cashflow</div>
-          <div
-            className={cn(
-              "text-2xl font-bold tabular-nums",
-              m.net >= 0 ? "text-emerald-600" : "text-red-600",
-            )}
-          >
-            {fmt(m.net)}
+        <CardContent className="space-y-2 p-5">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Opening balance (carried from prior months)</span>
+            <span className={cn("tabular-nums font-medium", m.openingBalance >= 0 ? "text-emerald-600" : "text-red-600")}>{fmt2(m.openingBalance)}</span>
+          </div>
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Net this month</span>
+            <span className={cn("tabular-nums font-medium", m.net >= 0 ? "text-emerald-600" : "text-red-600")}>{fmt2(m.net)}</span>
+          </div>
+          <div className="flex items-center justify-between border-t pt-2">
+            <div className="text-base font-semibold">Closing balance</div>
+            <div className={cn("text-2xl font-bold tabular-nums", m.closingBalance >= 0 ? "text-emerald-600" : "text-red-600")}>
+              {fmt(m.closingBalance)}
+            </div>
           </div>
         </CardContent>
       </Card>

@@ -15,8 +15,6 @@ export function YearlyPage() {
   const tms = termMonths(state);
   const eligible = state.schools.filter(isEligible);
   const chartData = months.map((m, i) => ({ month: MONTHS[i], net: Math.round(m.net) }));
-  const annual = (sel: (m: ReturnType<typeof computeYear>[number]) => number) =>
-    months.reduce((a, m) => a + sel(m), 0);
 
   return (
     <div className="space-y-6">
@@ -62,16 +60,19 @@ export function YearlyPage() {
               <Row label="Total expenses" values={months.map((m) => m.totalExpenses)} tone="negative" bold />
               <tr><td colSpan={14} className="py-1"></td></tr>
               <Row label="Net cashflow" values={months.map((m) => m.net)} netHighlight bold />
+              <tr><td colSpan={14} className="py-1"></td></tr>
+              <Row label="Opening balance" values={months.map((m) => m.openingBalance)} netHighlight />
+              <Row label="Closing balance (carry-over)" values={months.map((m) => m.closingBalance)} netHighlight bold />
             </tbody>
             <tfoot>
               <tr className="border-t">
-                <td className="px-2 py-2 font-semibold">Annual net</td>
+                <td className="px-2 py-2 font-semibold">Year-end balance</td>
                 <td colSpan={12}></td>
                 <td className={cn(
                   "px-2 py-2 text-right font-semibold tabular-nums",
-                  annual((m) => m.net) >= 0 ? "text-emerald-600" : "text-red-600",
+                  months[11].closingBalance >= 0 ? "text-emerald-600" : "text-red-600",
                 )}>
-                  {fmt(annual((m) => m.net))}
+                  {fmt(months[11].closingBalance)}
                 </td>
               </tr>
             </tfoot>
