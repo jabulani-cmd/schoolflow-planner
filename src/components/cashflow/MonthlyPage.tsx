@@ -106,15 +106,20 @@ export function MonthlyPage() {
       </Card>
 
       <Card>
-        <CardContent className="flex items-center justify-between p-5">
-          <div className="text-base font-semibold">Net cashflow</div>
-          <div
-            className={cn(
-              "text-2xl font-bold tabular-nums",
-              m.net >= 0 ? "text-emerald-600" : "text-red-600",
-            )}
-          >
-            {fmt(m.net)}
+        <CardContent className="space-y-2 p-5">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Opening balance (carried from prior months)</span>
+            <span className={cn("tabular-nums font-medium", m.openingBalance >= 0 ? "text-emerald-600" : "text-red-600")}>{fmt2(m.openingBalance)}</span>
+          </div>
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Net this month</span>
+            <span className={cn("tabular-nums font-medium", m.net >= 0 ? "text-emerald-600" : "text-red-600")}>{fmt2(m.net)}</span>
+          </div>
+          <div className="flex items-center justify-between border-t pt-2">
+            <div className="text-base font-semibold">Closing balance</div>
+            <div className={cn("text-2xl font-bold tabular-nums", m.closingBalance >= 0 ? "text-emerald-600" : "text-red-600")}>
+              {fmt(m.closingBalance)}
+            </div>
           </div>
         </CardContent>
       </Card>
