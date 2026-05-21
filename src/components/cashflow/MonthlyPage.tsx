@@ -5,13 +5,14 @@ import {
   Select, SelectTrigger, SelectValue, SelectContent, SelectItem,
 } from "@/components/ui/select";
 import { MetricCard } from "./MetricCard";
-import { computeMonth, fmt, fmt2, isEligible, MONTHS_FULL } from "@/lib/cashflow/calc";
+import { computeYear, fmt, fmt2, isEligible, MONTHS_FULL } from "@/lib/cashflow/calc";
 import { cn } from "@/lib/utils";
 
 export function MonthlyPage() {
   const state = useStore();
   const { selectedMonth, selectedYear, setSelectedMonth, setSelectedYear, schools } = state;
-  const m = computeMonth(state, selectedMonth);
+  const year = computeYear(state);
+  const m = year[selectedMonth];
   const eligible = schools.filter(isEligible);
 
   const years = [2026, 2027, 2028, 2029, 2030];
