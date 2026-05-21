@@ -78,17 +78,6 @@ export function YearlyPage() {
                 </td>
               </tr>
             </tfoot>
-              <tr className="border-t">
-                <td className="px-2 py-2 font-semibold">Annual net</td>
-                <td colSpan={12}></td>
-                <td className={cn(
-                  "px-2 py-2 text-right font-semibold tabular-nums",
-                  annual((m) => m.net) >= 0 ? "text-emerald-600" : "text-red-600",
-                )}>
-                  {fmt(annual((m) => m.net))}
-                </td>
-              </tr>
-            </tfoot>
           </table>
         </CardContent>
       </Card>
