@@ -58,6 +58,8 @@ export type MonthBreakdown = {
   customExpenses: number;
   totalExpenses: number;
   net: number;
+  openingBalance: number;
+  closingBalance: number;
 };
 
 export function computeMonth(state: AppState, month: number): MonthBreakdown {
@@ -95,9 +97,18 @@ export function computeMonth(state: AppState, month: number): MonthBreakdown {
     customExpenses,
     totalExpenses,
     net,
+    openingBalance: 0,
+    closingBalance: net,
   };
 }
 
 export function computeYear(state: AppState): MonthBreakdown[] {
-  return Array.from({ length: 12 }, (_, m) => computeMonth(state, m));
+  let running = 0;
+  return Array.from({ length: 12 }, (_, m) => {
+    const b = computeMonth(state, m);
+    b.openingBalance = running;
+    b.closingBalance = running + b.net;
+    running = b.closingBalance;
+    return b;
+  });
 }
