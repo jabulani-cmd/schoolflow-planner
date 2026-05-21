@@ -93,6 +93,9 @@ export function exportXlsx(state: AppState) {
     totalExp,
     [],
     netRow,
+    [],
+    openRow,
+    closeRow,
   ];
   const ws2 = XLSX.utils.aoa_to_sheet(cashflowData);
   ws2["!cols"] = [{ wch: 32 }, ...Array(13).fill({ wch: 14 })];
