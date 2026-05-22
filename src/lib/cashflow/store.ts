@@ -35,6 +35,7 @@ const defaultState: AppState = {
   },
   selectedYear: 2026,
   selectedMonth: new Date().getMonth(),
+  yearsToProject: 3,
 };
 
 type Actions = {
@@ -48,6 +49,7 @@ type Actions = {
   setTermDates: (patch: Partial<TermDates>) => void;
   setSelectedYear: (y: number) => void;
   setSelectedMonth: (m: number) => void;
+  setYearsToProject: (n: number) => void;
   reset: () => void;
 };
 
@@ -83,6 +85,7 @@ export const useStore = create<AppState & Actions>()(
         set((st) => ({ termDates: { ...st.termDates, ...patch } })),
       setSelectedYear: (y) => set({ selectedYear: y }),
       setSelectedMonth: (m) => set({ selectedMonth: m }),
+      setYearsToProject: (n) => set({ yearsToProject: Math.max(1, Math.min(10, n)) }),
       reset: () => set(defaultState),
     }),
     { name: "cashflow-state-v1" },

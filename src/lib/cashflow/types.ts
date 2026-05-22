@@ -34,4 +34,5 @@ export type AppState = {
   termDates: TermDates;
   selectedYear: number;
   selectedMonth: number; // 0-11
+  yearsToProject: number; // 1-5
 };
