@@ -141,7 +141,7 @@ function YearTable({
   y: YearBreakdown;
   tms: number[];
   eligibleCount: number;
-  state: ReturnType<typeof useStore>;
+  state: import("@/lib/cashflow/types").AppState;
 }) {
   const months = y.months;
   return (
