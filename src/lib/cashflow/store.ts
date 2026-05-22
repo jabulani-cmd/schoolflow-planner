@@ -35,6 +35,7 @@ const defaultState: AppState = {
   },
   selectedYear: 2026,
   selectedMonth: new Date().getMonth(),
+  yearsToProject: 3,
 };
 
 type Actions = {
@@ -48,6 +49,7 @@ type Actions = {
   setTermDates: (patch: Partial<TermDates>) => void;
   setSelectedYear: (y: number) => void;
   setSelectedMonth: (m: number) => void;
+  setYearsToProject: (n: number) => void;
   reset: () => void;
 };
 
