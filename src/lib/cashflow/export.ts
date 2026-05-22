@@ -145,6 +145,7 @@ export function exportXlsx(state: AppState) {
 
   // ---------- Year sheets ----------
   const yearSheetNames: string[] = [];
+  let captured: { totalRevR: number; totalExpR: number; netR: number; openR: number; closeR: number } | null = null;
   for (let yi = 0; yi < count; yi++) {
     const year = startYear + yi;
     const sheetName = `Year_${year}`;
@@ -308,9 +309,9 @@ export function exportXlsx(state: AppState) {
     r += 1;
 
     // Track final ref
-    void closeR; void headerR;
+    captured = { totalRevR, totalExpR, netR, openR, closeR };
+    void headerR;
     ws["!cols"] = [{ wch: 36 }, ...Array(13).fill({ wch: 13 })];
-    ws["!freeze"] = { xSplit: 1, ySplit: headerR + 1 };
     finalize(ws, 13, r - 1);
     XLSX.utils.book_append_sheet(wb, ws, sheetName);
   }
@@ -321,34 +322,17 @@ export function exportXlsx(state: AppState) {
   ["Year", "Opening balance", "Total revenue", "Total expenses", "Net cashflow", "Closing balance"].forEach(
     (h, i) => setLabel(s, i, 2, h, true),
   );
-  // Each year sheet has same layout — but row positions depend on number of schools.
-  // Use named references via the sheet's "Annual" column for Total rev / Total exp / Net / Open / Close.
-  // We tracked: totalRevR, totalExpR, netR, openR, closeR — all are the same across year sheets
-  // since schools count is the same. Capture from last loop by reconstructing:
-  // (we need these from inside the loop — recompute deterministically below)
-  const schoolsCount = schools.length;
-  // header row index = 1 (0-indexed), termFlag row = 2, blank row = 3
-  // per-school rows start at index 4 (each school = 2 rows)
-  // After schools: totalMonthly, totalTerm, totalRev, blank, d1, d2, dev, donations, custom, totalExp, blank, net, open, close
-  const baseAfterSchools = 4 + schoolsCount * 2;
-  const sumTotalRevR = baseAfterSchools + 3; // 1-indexed; +1 for monthly, +1 term, +1 totalRev → offset 2 from base, but base is 0-indexed; convert
-  const summary_totalRev_excelRow = baseAfterSchools + 1 + 2 + 1; // baseAfterSchools 0-idx → +1 to 1-idx, +2 for monthly/term, +1 for totalRev
-  const summary_totalExp_excelRow = summary_totalRev_excelRow + 1 + 5 + 1; // +1 blank, +5 expenses, +1 totalExp
-  const summary_net_excelRow = summary_totalExp_excelRow + 1 + 1; // +1 blank, +1 net
-  const summary_open_excelRow = summary_net_excelRow + 1;
-  const summary_close_excelRow = summary_open_excelRow + 1;
-  void sumTotalRevR;
-
+  const pos = captured!;
   for (let yi = 0; yi < count; yi++) {
     const r = 3 + yi;
     const year = startYear + yi;
     const sn = `Year_${year}`;
     setNum(s, 0, r, year, "0");
-    setFormula(s, 1, r, `'${sn}'!N${summary_open_excelRow}`);
-    setFormula(s, 2, r, `'${sn}'!N${summary_totalRev_excelRow}`);
-    setFormula(s, 3, r, `'${sn}'!N${summary_totalExp_excelRow}`);
-    setFormula(s, 4, r, `'${sn}'!N${summary_net_excelRow}`);
-    setFormula(s, 5, r, `'${sn}'!N${summary_close_excelRow}`);
+    setFormula(s, 1, r, `'${sn}'!N${pos.openR}`);
+    setFormula(s, 2, r, `'${sn}'!N${pos.totalRevR}`);
+    setFormula(s, 3, r, `'${sn}'!N${pos.totalExpR}`);
+    setFormula(s, 4, r, `'${sn}'!N${pos.netR}`);
+    setFormula(s, 5, r, `'${sn}'!N${pos.closeR}`);
   }
   // Grand totals
   const totalsR = 3 + count;
