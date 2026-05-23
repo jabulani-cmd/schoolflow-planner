@@ -94,6 +94,6 @@ export const useStore = create<AppState & Actions>()(
       setStartMonth: (m) => set({ startMonth: Math.max(0, Math.min(11, m)) }),
       reset: () => set(defaultState),
     }),
-    { name: "cashflow-state-v1" },
+    { name: "cashflow-state-v2" },
   ),
 );
