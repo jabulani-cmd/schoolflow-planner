@@ -124,16 +124,31 @@ export type YearBreakdown = {
 };
 
 export function computeMultiYear(state: AppState, startYear: number, count: number): YearBreakdown[] {
+  const startMonth = state.startMonth ?? 0;
+  const totalMonths = count * 12;
+  const byYear = new Map<number, number[]>();
+  for (let i = 0; i < totalMonths; i++) {
+    const cm = (startMonth + i) % 12;
+    const yr = startYear + Math.floor((startMonth + i) / 12);
+    if (!byYear.has(yr)) byYear.set(yr, []);
+    byYear.get(yr)!.push(cm);
+  }
   const out: YearBreakdown[] = [];
   let opening = 0;
-  for (let i = 0; i < count; i++) {
-    const months = computeYear(state, opening);
+  for (const [year, monthsList] of byYear) {
+    let running = opening;
+    const months = monthsList.map((mi) => {
+      const b = computeMonth(state, mi);
+      b.openingBalance = running;
+      b.closingBalance = running + b.net;
+      running = b.closingBalance;
+      return b;
+    });
     const totalRevenue = months.reduce((a, m) => a + m.totalRevenue, 0);
     const totalExpenses = months.reduce((a, m) => a + m.totalExpenses, 0);
     const net = totalRevenue - totalExpenses;
-    const closingBalance = months[11].closingBalance;
-    out.push({ year: startYear + i, months, openingBalance: opening, closingBalance, totalRevenue, totalExpenses, net });
-    opening = closingBalance;
+    out.push({ year, months, openingBalance: opening, closingBalance: running, totalRevenue, totalExpenses, net });
+    opening = running;
   }
   return out;
 }

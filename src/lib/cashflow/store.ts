@@ -90,6 +90,8 @@ export const useStore = create<AppState & Actions>()(
       setSelectedYear: (y) => set({ selectedYear: y }),
       setSelectedMonth: (m) => set({ selectedMonth: m }),
       setYearsToProject: (n) => set({ yearsToProject: Math.max(1, Math.min(10, n)) }),
+      setStartYear: (y) => set({ startYear: y }),
+      setStartMonth: (m) => set({ startMonth: Math.max(0, Math.min(11, m)) }),
       reset: () => set(defaultState),
     }),
     { name: "cashflow-state-v1" },
