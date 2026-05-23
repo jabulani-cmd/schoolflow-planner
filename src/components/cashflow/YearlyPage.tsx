@@ -123,7 +123,7 @@ export function YearlyPage() {
       ))}
 
       <Card>
-        <CardHeader><CardTitle>Monthly net cashflow ({selectedYear}–{selectedYear + yearsToProject - 1})</CardTitle></CardHeader>
+        <CardHeader><CardTitle>Monthly net cashflow ({MONTHS[startMonth]} {startYear} – {years[years.length - 1] ? `${MONTHS[years[years.length - 1].months[years[years.length - 1].months.length - 1].month]} ${years[years.length - 1].year}` : ""})</CardTitle></CardHeader>
         <CardContent style={{ height: 360 }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
