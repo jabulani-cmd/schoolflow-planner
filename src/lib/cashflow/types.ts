@@ -35,4 +35,6 @@ export type AppState = {
   selectedYear: number;
   selectedMonth: number; // 0-11
   yearsToProject: number; // 1-5
+  startYear: number; // first projection year
+  startMonth: number; // 0-11, first projection month
 };

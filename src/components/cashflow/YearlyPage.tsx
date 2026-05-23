@@ -15,14 +15,14 @@ import {
 
 export function YearlyPage() {
   const state = useStore();
-  const { selectedYear, setSelectedYear, yearsToProject, setYearsToProject } = state;
+  const { startYear, setStartYear, startMonth, setStartMonth, yearsToProject, setYearsToProject } = state;
   const tms = termMonths(state);
   const eligible = state.schools.filter(isEligible);
-  const years = computeMultiYear(state, selectedYear, yearsToProject);
+  const years = computeMultiYear(state, startYear, yearsToProject);
 
   const chartData = years.flatMap((y) =>
-    y.months.map((m, i) => ({
-      label: `${MONTHS[i]} ${String(y.year).slice(2)}`,
+    y.months.map((m) => ({
+      label: `${MONTHS[m.month]} ${String(y.year).slice(2)}`,
       net: Math.round(m.net),
       closing: Math.round(m.closingBalance),
     })),
@@ -41,8 +41,17 @@ export function YearlyPage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex flex-wrap items-end gap-3">
           <div>
+            <Label className="text-xs">Start month</Label>
+            <Select value={String(startMonth)} onValueChange={(v) => setStartMonth(Number(v))}>
+              <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {MONTHS.map((mn, i) => (<SelectItem key={mn} value={String(i)}>{mn}</SelectItem>))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
             <Label className="text-xs">Start year</Label>
-            <Select value={String(selectedYear)} onValueChange={(v) => setSelectedYear(Number(v))}>
+            <Select value={String(startYear)} onValueChange={(v) => setStartYear(Number(v))}>
               <SelectTrigger className="w-28"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {yearOptions.map((y) => (<SelectItem key={y} value={String(y)}>{y}</SelectItem>))}
@@ -61,7 +70,7 @@ export function YearlyPage() {
             </Select>
           </div>
           <div className="text-sm text-muted-foreground">
-            {selectedYear} – {selectedYear + yearsToProject - 1}
+            {MONTHS[startMonth]} {startYear} – {years[years.length - 1] ? `${MONTHS[years[years.length - 1].months[years[years.length - 1].months.length - 1].month]} ${years[years.length - 1].year}` : ""}
           </div>
         </div>
         <Button onClick={() => exportXlsx(state)}>
@@ -114,7 +123,7 @@ export function YearlyPage() {
       ))}
 
       <Card>
-        <CardHeader><CardTitle>Monthly net cashflow ({selectedYear}–{selectedYear + yearsToProject - 1})</CardTitle></CardHeader>
+        <CardHeader><CardTitle>Monthly net cashflow ({MONTHS[startMonth]} {startYear} – {years[years.length - 1] ? `${MONTHS[years[years.length - 1].months[years[years.length - 1].months.length - 1].month]} ${years[years.length - 1].year}` : ""})</CardTitle></CardHeader>
         <CardContent style={{ height: 360 }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
@@ -144,35 +153,36 @@ function YearTable({
   state: import("@/lib/cashflow/types").AppState;
 }) {
   const months = y.months;
+  const monthIdxs = months.map((m) => m.month);
   return (
     <Card>
       <CardHeader><CardTitle>Cashflow — {y.year}</CardTitle></CardHeader>
       <CardContent className="overflow-x-auto">
-        <table className="w-full min-w-[900px] text-sm">
+        <table className="w-full min-w-[700px] text-sm">
           <thead>
             <tr className="border-b text-left">
               <th className="px-2 py-2 font-medium">Line item</th>
-              {MONTHS.map((mn, i) => (
-                <th key={mn} className={cn("px-2 py-2 text-right font-medium", tms.includes(i) && "bg-blue-50 text-blue-700")}>
-                  {mn}
+              {monthIdxs.map((i) => (
+                <th key={i} className={cn("px-2 py-2 text-right font-medium", tms.includes(i) && "bg-blue-50 text-blue-700")}>
+                  {MONTHS[i]}
                   {tms.includes(i) && <div className="text-[10px]">Term</div>}
                 </th>
               ))}
-              <th className="px-2 py-2 text-right font-semibold">Annual</th>
+              <th className="px-2 py-2 text-right font-semibold">Total</th>
             </tr>
           </thead>
           <tbody>
             <Row label="Monthly sub revenue" values={months.map((m) => m.monthlyRevenue)} tone="positive" />
             <Row label="Term sub revenue" values={months.map((m) => m.termRevenue)} tone="positive" />
             <Row label="Total revenue" values={months.map((m) => m.totalRevenue)} tone="positive" bold />
-            <tr><td colSpan={14} className="py-1"></td></tr>
+            <tr><td colSpan={monthIdxs.length + 2} className="py-1"></td></tr>
             <Row label="Director 1 salary" values={months.map(() => state.pricing.director1Salary)} tone="negative" />
             <Row label="Director 2 salary" values={months.map(() => state.pricing.director2Salary)} tone="negative" />
             <Row label="Developer salary" values={months.map(() => state.pricing.developerSalary)} tone="negative" />
             <Row label={`Computer donations (${eligibleCount})`} values={months.map((m) => m.donations)} tone="negative" />
             <Row label="Custom expenses" values={months.map((m) => m.customExpenses)} tone="negative" />
             <Row label="Total expenses" values={months.map((m) => m.totalExpenses)} tone="negative" bold />
-            <tr><td colSpan={14} className="py-1"></td></tr>
+            <tr><td colSpan={monthIdxs.length + 2} className="py-1"></td></tr>
             <Row label="Net cashflow" values={months.map((m) => m.net)} netHighlight bold />
             <Row label="Opening balance" values={months.map((m) => m.openingBalance)} netHighlight />
             <Row label="Closing balance (carry-over)" values={months.map((m) => m.closingBalance)} netHighlight bold />
