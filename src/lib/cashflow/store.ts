@@ -34,8 +34,10 @@ const defaultState: AppState = {
     term3: "2026-09-07",
   },
   selectedYear: 2026,
-  selectedMonth: new Date().getMonth(),
+  selectedMonth: 8,
   yearsToProject: 3,
+  startYear: 2026,
+  startMonth: 8, // September (Term 3 2026)
 };
 
 type Actions = {
@@ -50,6 +52,8 @@ type Actions = {
   setSelectedYear: (y: number) => void;
   setSelectedMonth: (m: number) => void;
   setYearsToProject: (n: number) => void;
+  setStartYear: (y: number) => void;
+  setStartMonth: (m: number) => void;
   reset: () => void;
 };
 
