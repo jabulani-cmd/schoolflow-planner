@@ -267,11 +267,12 @@ export function exportXlsx(state: AppState) {
       expenseRefs.push(r + 1);
       r += 1;
     };
-    addExpenseRow("Director 1 salary", () => REF.d1);
-    addExpenseRow("Director 2 salary", () => REF.d2);
-    addExpenseRow("Developer salary", () => REF.dev);
-    addExpenseRow("Computer donations", () => `${REF.eligibleCount}*${REF.donationMonthly}`);
-    addExpenseRow("Custom expenses", () => REF.customTotal);
+    const act = (colLetter: string) => `${colLetter}$${activeFlagExcelR}`;
+    addExpenseRow("Director 1 salary", (c) => `${REF.d1}*${act(c)}`);
+    addExpenseRow("Director 2 salary", (c) => `${REF.d2}*${act(c)}`);
+    addExpenseRow("Developer salary", (c) => `${REF.dev}*${act(c)}`);
+    addExpenseRow("Computer donations", (c) => `${REF.eligibleCount}*${REF.donationMonthly}*${act(c)}`);
+    addExpenseRow("Custom expenses", (c) => `${REF.customTotal}*${act(c)}`);
 
     setLabel(ws, 0, r, "Total expenses", true);
     for (let m = 0; m < 12; m++) {
