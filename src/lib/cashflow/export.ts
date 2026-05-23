@@ -74,6 +74,10 @@ export function exportXlsx(state: AppState) {
   setNum(a, 1, 17, tms[1] + 1, "0");
   setLabel(a, 0, 18, "Term 3");
   setNum(a, 1, 18, tms[2] + 1, "0");
+  setLabel(a, 0, 19, "Project start month (1-12)");
+  setNum(a, 1, 19, (state.startMonth ?? 0) + 1, "0");
+  setLabel(a, 0, 20, "Project start year");
+  setNum(a, 1, 20, state.startYear, "0");
 
   // Schools starting row index 21 (Excel row 22 header, row 23 first school)
   const schoolsHeaderR = 21;
