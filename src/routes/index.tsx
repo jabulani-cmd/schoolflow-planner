@@ -6,6 +6,7 @@ import { SchoolsPage } from "@/components/cashflow/SchoolsPage";
 import { MonthlyPage } from "@/components/cashflow/MonthlyPage";
 import { YearlyPage } from "@/components/cashflow/YearlyPage";
 import { Settings, School, CalendarDays, LineChart } from "lucide-react";
+import mbsLogo from "@/assets/mbs-logo.png";
 
 export const Route = createFileRoute("/")({ component: Index });
 
@@ -13,12 +14,20 @@ function Index() {
   const [tab, setTab] = useState("monthly");
   return (
     <div className="min-h-screen bg-slate-50">
-      <header className="border-b bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+      <header className="border-b bg-white shadow-sm">
+        <div className="mx-auto flex max-w-7xl items-center gap-4 px-6 py-4">
+          <img
+            src={mbsLogo}
+            alt="MavingTech Business Solutions"
+            className="h-14 w-auto object-contain"
+          />
+          <div className="hidden h-12 w-px bg-slate-200 sm:block" />
           <div>
-            <h1 className="text-lg font-semibold">Cashflow Builder</h1>
+            <h1 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
+              MavingTech Business Solutions
+            </h1>
             <p className="text-xs text-muted-foreground">
-              School management SaaS — monthly & yearly planning
+              Cashflow Builder — School management SaaS planning
             </p>
           </div>
         </div>
