@@ -142,9 +142,10 @@ export function exportXlsx(state: AppState) {
     term1: A("$B$17"),
     term2: A("$B$18"),
     term3: A("$B$19"),
+    startMonth: A("$B$20"),
     eligibleCount: A(`$B$${eligibleCountR + 1}`),
     customTotal: A(`$B$${customTotalR + 1}`),
-    schoolRow: (i: number) => firstSchoolR + i + 1, // 1-indexed Excel row
+    schoolRow: (i: number) => firstSchoolR + i + 1,
   };
 
   // ---------- Year sheets ----------
@@ -181,28 +182,40 @@ export function exportXlsx(state: AppState) {
       );
     }
     const termFlagExcelR = r + 1;
-    r += 2; // blank line
+    r += 1;
+
+    // Active flag row — masks pre-start months in first year
+    setLabel(ws, 0, r, "Active flag");
+    for (let m = 0; m < 12; m++) {
+      const mo = m + 1;
+      if (yi === 0) {
+        setFormula(ws, 1 + m, r, `IF(${mo}>=${REF.startMonth},1,0)`, "0");
+      } else {
+        setNum(ws, 1 + m, r, 1, "0");
+      }
+    }
+    const activeFlagExcelR = r + 1;
+    r += 2;
 
     // Per-school revenue rows
-    const monthlyRevRows: number[] = []; // Excel 1-indexed rows for SUM
+    const monthlyRevRows: number[] = [];
     const termRevRows: number[] = [];
     schools.forEach((s, i) => {
       const sRow = REF.schoolRow(i);
-      // Monthly subscription revenue per school
       setLabel(ws, 0, r, `${s.name} — monthly`);
       for (let m = 0; m < 12; m++) {
+        const colL = col(1 + m);
         setFormula(
           ws,
           1 + m,
           r,
-          `${A(`$E$${sRow}`)}*${A(`$C$${sRow}`)}*${REF.monthlyPrice}`,
+          `${A(`$E$${sRow}`)}*${A(`$C$${sRow}`)}*${REF.monthlyPrice}*${colL}$${activeFlagExcelR}`,
         );
       }
       setFormula(ws, 13, r, `SUM(B${r + 1}:M${r + 1})`);
       monthlyRevRows.push(r + 1);
       r += 1;
 
-      // Term revenue per school (only when term flag = 1)
       setLabel(ws, 0, r, `${s.name} — term`);
       for (let m = 0; m < 12; m++) {
         const colL = col(1 + m);
@@ -210,7 +223,7 @@ export function exportXlsx(state: AppState) {
           ws,
           1 + m,
           r,
-          `${A(`$E$${sRow}`)}*${A(`$D$${sRow}`)}*${REF.termPrice}*${colL}$${termFlagExcelR}`,
+          `${A(`$E$${sRow}`)}*${A(`$D$${sRow}`)}*${REF.termPrice}*${colL}$${termFlagExcelR}*${colL}$${activeFlagExcelR}`,
         );
       }
       setFormula(ws, 13, r, `SUM(B${r + 1}:M${r + 1})`);
